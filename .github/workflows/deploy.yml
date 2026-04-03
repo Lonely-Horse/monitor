@@ -1,0 +1,44 @@
+name: Deploy Monitor Config to Aliyun Server
+
+# 触发条件：当 main 分支有 push 动作时
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy-config:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. SSH 连上服务器进行配置同步
+    - name: SSH Remote Sync Config
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          echo "========================================="
+          echo "1. 进入监控项目目录..."
+          cd /home/user1/git_push/monitor
+          
+          echo "2. 从 GitHub 拉取最新的配置文件..."
+          # 强制重置本地修改并拉取最新配置（不影响被 .gitignore 忽略的 .env 文件）
+          git fetch --all
+          git reset --hard origin/main
+          
+          echo "3. 重新应用并启动 Docker Compose..."
+          # 如果 docker-compose.yml 变了，会重建对应容器
+          docker compose up -d
+          
+          echo "4. 热重载 Prometheus 配置 (如果规则文件变了)..."
+          # 向 Prometheus 容器发送 SIGHUP 信号，让它不重启容器直接重新读取 alert_rules.yml
+          docker kill -s SIGHUP monitor_prometheus
+          
+          echo "5. 热重载 Alertmanager 配置..."
+          # 向 Alertmanager 发送热重载信号
+          docker kill -s SIGHUP monitor_alertmanager
+          
+          echo "🚀 Monitor Configuration Deployment Successful!"
+          echo "========================================="

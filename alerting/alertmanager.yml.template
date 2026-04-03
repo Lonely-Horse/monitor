@@ -1,0 +1,17 @@
+global:
+        smtp_smarthost: "smtp.qq.com:587"
+        smtp_from: "${QQ_email_User}"
+        smtp_auth_username: "${QQ_email_User}"
+        smtp_auth_password: "${QQ_email_Code}"
+        smtp_require_tls: true
+route:
+        receiver: "qq_email"
+        group_by: ["alertname","service"]
+        group_wait: 1m
+        group_interval: 5m
+        repeat_interval: 20m
+receivers:
+        - name: "qq_email"
+          email_configs:
+                  - to: "2703023812@qq.com"
+                    send_resolved: true

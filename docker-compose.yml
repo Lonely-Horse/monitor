@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+        node-exporter:
+                image: prom/node-exporter:latest
+                container_name: monitor_node_exporter
+                restart: always
+                ports:
+                        - "9100:9100"
+                volumes:
+                        - /proc:/host/proc:ro
+                        - /sys:/host/sys:ro
+                        - /:/rootfs:ro
+                command:
+                        - '--path.procfs=/host/proc'
+                        - '--path.sysfs=/host/sys'
+                        - '--path.rootfs=/rootfs'
+                        # 下面这行是正则表达式，忽略一些不需要监控的虚拟文件系统，防止报错
+                        - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+                networks:
+                        - monitor_net
+        prometheus:
+                image: prom/prometheus:latest
+                container_name: monitor_prometheus
+                restart: always
+                ports:
+                        - "9090:9090"
+                volumes:
+                        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+                        - prometheus_data:/prometheus
+                        - ./alerting/alert_rules.yml:/etc/prometheus/alert_rules.yml
+                command:
+                        - '--config.file=/etc/prometheus/prometheus.yml'
+                        - '--storage.tsdb.path=/prometheus'
+                        - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+                        - '--web.console.templates=/usr/share/prometheus/consoles'
+                networks:
+                        - monitor_net
+        grafana:
+                image: grafana/grafana:latest
+                container_name: monitor_grafana
+                restart: always
+                ports:
+                        - "3000:3000"
+                volumes:
+                        - grafana_data:/var/lib/grafana
+                networks:
+                        - monitor_net
+                environment:
+                        # 告诉 Grafana 它的真实域名
+                        - GF_SERVER_DOMAIN=grafana.lonelyhorse.top
+                        # 告诉 Grafana 它是通过根路径访问的
+                        - GF_SERVER_ROOT_URL=https://grafana.lonelyhorse.top/
+        alertmanager:
+                image: prom/alertmanager:latest
+                container_name: monitor_alertmanager
+                restart: always
+                ports:
+                        - "9093:9093"
+                volumes:
+                        - ./alerting/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+                command:
+                        - '--config.file=/etc/alertmanager/alertmanager.yml'
+                networks:
+                        - monitor_net
+volumes:
+        prometheus_data:
+        grafana_data:
+networks:
+        monitor_net:
+                external: true
+                name: global_public_net

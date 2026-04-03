@@ -1,0 +1,39 @@
+groups:
+  - name: My_blog-service-alerts
+    rules:
+      - alert: BlogInstanceDown
+        expr: 'up{job="My-blog"} == 0'
+        for: 2m
+        labels: 
+          severity: critical
+          service: My_blog
+        annotations:
+          summary: "博客服务实例不可达"
+          description: "prometheus连续时间超过2m无法抓取到blog服务"
+      - alert: High404yrate
+        expr: 'sum(increase(blog_not_found_total[5m])) > 20'
+        for: 1m
+        labels:
+          severity: warning
+          service: My_blog
+        annotations:
+          summary: "网页404问题增长速度过快"
+          description: "prometheus抓取到的404数据显示，服务出现404异常增加的情况"
+      - alert: HostDiskUsageHigh
+        expr: '(1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay", mountpoint="/"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay", mountpoint="/"})) * 100 > 80'
+        for: 2m
+        labels:
+          severity: critical
+          service: aliyun_linux_server
+        annotations:
+          summary: "ali云服务器的rom磁盘空间占用已超过80%"
+          description: "prometheus抓取到的磁盘空间数据显示，磁盘空间已经接近不足"
+      - alert: HostHighMemoryUsage
+        expr: '(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90 '
+        for: 2m
+        labels:
+          severity: critical
+          service: aliyun_linux_server
+        annotations:
+          summary: "ali云服务器的ram的内存空间占用超过90%"
+          description: "prometheus抓取到的内存空间数据显示，ram的占用过大"
