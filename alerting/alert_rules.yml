@@ -11,7 +11,7 @@ groups:
           summary: "博客服务实例不可达"
           description: "prometheus连续时间超过2m无法抓取到blog服务"
       - alert: High404yrate
-        expr: 'sum(increase(blog_not_found_total[5m])) > 20'
+        expr: 'sum(increase(blog_not_found_total[5m])) > 40'
         for: 1m
         labels:
           severity: warning
