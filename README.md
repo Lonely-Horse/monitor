@@ -28,7 +28,7 @@ graph TD
     Actions -- SSH via Tailscale --> Phone
     Phone -- Git Pull & Build --> Blog
 ```
-#🛠 技术栈 (Tech Stack)
+## 🛠 技术栈 (Tech Stack)
 维度
 	
 技术实现
@@ -53,7 +53,7 @@ GitHub Actions (CI/CD) / GitOps
  
   
  
-#🔥 核心亮点 (Project Highlights)
+## 🔥 核心亮点 (Project Highlights)
 1. 边缘侧原地构建 (Build on Edge)
 
 针对 x86 (云端) 与 ARM64 (边缘端) 的架构差异，通过 GitHub Actions 驱动边缘节点进行 原地构建 (Native Build)。仅传输源码，在边缘端生成适配 CPU 的原生镜像，极大提升了部署效率与兼容性。
@@ -66,7 +66,7 @@ GitHub Actions (CI/CD) / GitOps
     硬件监控：通过 Node Exporter 监控手机 CPU 温度、内存压力及网络 IO。
     告警闭环：实现“服务异常 -> 阈值触发 -> 邮件告警”的自动化运维闭环（基于 Alertmanager）。
 
-#📊 运行状态预览 (Monitoring Dashboard)
+## 📊 运行状态预览 (Monitoring Dashboard)
 
     提示：以下为系统实时运行截图。请确保仓库内包含 images/ 目录。
 
@@ -78,7 +78,7 @@ GitHub Actions (CI/CD) / GitOps
 
  
  
-#📅 路线图 (Roadmap)
+## 📅 路线图 (Roadmap)
 
      
     业务从云端向边缘 ARM 节点迁移。
@@ -91,7 +91,7 @@ GitHub Actions (CI/CD) / GitOps
      
     引入 Ansible 实现多节点配置自动化管理。
 
-#👨‍💻 关于作者
+## 👨‍💻 关于作者
 
 LonelyHorse - 重庆地区三本计算机专业大一学生 / DevOps 爱好者
 
