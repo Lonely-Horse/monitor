@@ -13,7 +13,7 @@
 ## 🏗️ 架构概览
 
 ```text
-[ 业务服务 (FastAPI) ] --暴露 /metrics--> [ Prometheus ] <--拉取基础指标-- [ Node Exporter ]
+[ 业务服务 (FastAPI) ] --暴露 /metrics--> [ Prometheus ] <--拉取基础指标数据-- [ Node Exporter ]
                                             |
                                         触发规则评估
                                             v
