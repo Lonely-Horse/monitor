@@ -1,83 +1,98 @@
-🚀 Edge Computing & Observability: From Cloud to ARM64 Mobile
+# 📱 Edge-Computing & Observability Platform
+> **基于一加手机 (ARM64) 边缘节点与阿里云公网网关的分布式监控与个人博客系统**
+> 
+> ![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen)
+> ![Platform](https://img.shields.io/badge/Platform-ARM64%20|%20x86_64-blue)
+> ![Network](https://img.shields.io/badge/Network-Tailscale%20VPN-orange)
 
-    项目定位：基于一加手机 (ARM64) 边缘节点与阿里云公网网关的分布式监控与博客系统。
-    Project Goal: Migrating cloud services to edge nodes using a Zero-Trust Network (Tailscale) and GitOps (GitHub Actions).
+---
 
-🏗 架构设计 (Architecture)
+## 🏗 架构图 (Architecture)
 
-本项目打破了传统的“全站上云”模式，采用 边缘侧计算 + 云端网关 的混合架构：
+本项目采用 **"云端网关 + 边缘计算"** 的混合架构，通过私有隧道实现公网访问与内网服务的解耦。
 
-    Cloud Gateway (阿里云): 部署 Nginx 作为公网入口，负责 SSL 卸载 (HTTPS) 和流量反向代理。
-    Edge Node (OnePlus 6): 运行 postmarketOS (Linux)，作为核心计算节点，承载 Docker 容器化业务。
-    Networking (Tailscale): 构建基于 WireGuard 的加密私有网络，实现跨地域设备直连与内网穿透。
-    CI/CD (GitOps): 代码推送即部署，在 ARM 边缘端实现原地构建 (Build on Edge)。
-
-Docker ContainersHTTPSTailscale 隧道GitHub ActionsSSHGit Pull & Rebuild访问者阿里云 Nginx 网关一加手机 边缘节点FastAPI BlogPrometheusGrafanaAlertmanagerGitHub
- 
-  
-  
- 
+```mermaid
+graph TD
+    User((访问者)) -- HTTPS/443 --> Aliyun[阿里云 Nginx 网关]
+    Aliyun -- Tailscale 隧道 --> Phone[一加手机 边缘节点]
+    
+    subgraph Phone_Docker[Docker Containers (Host Mode)]
+        Blog[FastAPI Blog]
+        Prom[Prometheus]
+        Graf[Grafana]
+        Alert[Alertmanager]
+        Node[Node Exporter]
+    end
+    
+    GitHub -- Push Code --> Actions[GitHub Actions]
+    Actions -- SSH via Tailscale --> Phone
+    Phone -- Git Pull & Build --> Blog
 🛠 技术栈 (Tech Stack)
+维度
+	
+技术实现
+基础硬件
+	
+一加手机 (OnePlus 6) / 阿里云服务器 / Fedora 开发机
+操作系统
+	
+postmarketOS (Edge Linux) / Rocky Linux 9 (容器基础)
+容器技术
+	
+Docker / Docker Compose / Native ARM64 Build
+网络层
+	
+Tailscale (SD-WAN) / Nginx (Reverse Proxy) / SSL (Let's Encrypt)
+监控层
+	
+Prometheus / Grafana / Alertmanager / Node Exporter
+自动化
+	
+GitHub Actions (CI/CD) / GitOps
+ 
+  
+ 
+🔥 核心亮点 (Project Highlights)
+1. 边缘侧原地构建 (Build on Edge)
 
-    Backend: Python 3.9 / FastAPI / Jinja2
-    Runtime: Docker / Docker Compose (network_mode: host)
-    Observability: Prometheus / Grafana / Node Exporter / Alertmanager
-    OS/Kernel: postmarketOS (Linux 6.x) / Rocky Linux 9 (Container Base)
-    Gateway: Nginx (Reverse Proxy) / Let's Encrypt (SSL)
-    Network: Tailscale (SD-WAN) / nftables (Firewall)
-    Automation: GitHub Actions (CI/CD)
+针对 ARM64 架构差异，通过 GitHub Actions 驱动边缘节点进行 原地构建 (Native Build)。仅传输源码，在边缘端生成适配 CPU 的原生镜像，极大提升了部署效率与兼容性。
+2. 零信任网络架构 (Zero-Trust)
 
-🔥 核心特性 (Hardcore Features)
-1. 异构计算与原地构建 (Native ARM64 Build)
+手机节点不暴露公网端口，仅允许来自 Tailscale 虚拟隧道的入站流量。配合宿主机级 nftables 防火墙，构建了极高的安全屏障。
+3. 全链路可观测性 (Full Observability)
 
-针对 x86 (云端) 与 ARM64 (边缘端) 的架构差异，放弃了传统的镜像仓库推送模式，采用 GitOps 原地构建 方案。通过 GitHub Actions 远程驱动边缘节点拉取源码并构建原生 ARM64 镜像，规避了交叉编译带来的兼容性问题。
-2. 网络安全与零信任 (Zero Trust Security)
+    业务监控：实时追踪 FastAPI 博客的访问量、QPS 及 404 状态。
+    硬件监控：监控手机 CPU 温度、内存压力及网络 IO。
+    告警闭环：实现“服务异常 -> 阈值触发 -> 邮件告警”的自动化运维闭环。
 
-    手机节点不直接暴露任何公网端口，通过 Tailscale 建立加密隧道。
-    配置宿主机级防火墙 nftables，仅放行 tailscale0 接口流量，实现极高的入站安全性。
-    云端 Nginx 强制开启 HSTS 与 SSL 加密。
+📊 运行状态预览 (Monitoring Dashboard)
 
-3. 全链路可观测性 (Full-Stack Observability)
+    提示：以下为系统实时运行截图。
 
-    业务埋点：FastAPI 接入 Prometheus 中间件，实时监控 QPS、响应延迟及业务 404/500 状态。
-    硬件监控：Node Exporter 采集手机 CPU 温度、内存压力、磁盘 IO 及网络流量。
-    告警闭环：配置 Alertmanager 接入 SMTP 邮件通知，实现“服务宕机 -> 阈值触发 -> 邮件告警”的自动化闭环。
+1. 监控系统概览 (Grafana Dashboard)
 
-4. 边缘侧性能优化 (Edge Optimization)
+ 
+ 
+2. 监控目标状态 (Prometheus Targets)
 
-    使用 Docker network_mode: host 模式，减少虚拟网桥带来的 NAT 损耗，提升边缘侧高并发处理能力。
-    开启 Nginx Gzip 压缩与静态资源缓存，有效缓解手机上传带宽受限带来的延迟感。
-
-📈 监控预览 (Monitoring Preview)
-
-(建议在这里贴 1-2 张你 Grafana 的截图，非常加分！)
-🛠 如何部署 (Deployment)
-
-     基础设施准备:
-        手机刷入 postmarketOS 并安装 Docker。
-        所有节点加入同一个 Tailscale 网络。
-     配置网关:
-        在阿里云 Nginx 配置中指向手机的 Tailscale IP。
-     自动化部署:
-        在 GitHub Secrets 中配置 SERVER_IP, SERVER_USER, SSH_PRIVATE_KEY。
-        git push 触发 GitHub Actions 自动流水线。
-
+ 
+ 
 📅 路线图 (Roadmap)
 
      
-    核心业务从阿里云向一加手机迁移。
+    业务从云端向边缘 ARM 节点迁移。
      
-    实现基于 Tailscale 的全链路监控与告警。
+    落地全链路 Prometheus 监控与邮件告警。
      
-    落地 GitHub Actions 自动化 CI/CD 流水线。
+    成功打通 GitHub Actions 自动化部署流水线。
      
-    自建国内 DERP 节点优化 Tailscale 转发延迟。
+    自建国内 DERP 节点优化 Tailscale 延迟。
      
     引入 Ansible 实现多节点配置自动化管理。
 
-👨‍💻 Author
+👨‍💻 关于作者
 
 LonelyHorse - 重庆地区大一学生 / DevOps 爱好者
 
-    Email: 2703023812@qq.com
     Blog: https://blog.lonelyhorse.top
+    Monitoring: https://grafana.lonelyhorse.top
