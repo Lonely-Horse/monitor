@@ -28,7 +28,7 @@ graph TD
     Actions -- SSH via Tailscale --> Phone
     Phone -- Git Pull & Build --> Blog
 ```
-🛠 技术栈 (Tech Stack)
+#🛠 技术栈 (Tech Stack)
 维度
 	
 技术实现
@@ -53,22 +53,22 @@ GitHub Actions (CI/CD) / GitOps
  
   
  
-🔥 核心亮点 (Project Highlights)
+#🔥 核心亮点 (Project Highlights)
 1. 边缘侧原地构建 (Build on Edge)
 
-针对 ARM64 架构差异，通过 GitHub Actions 驱动边缘节点进行 原地构建 (Native Build)。仅传输源码，在边缘端生成适配 CPU 的原生镜像，极大提升了部署效率与兼容性。
+针对 x86 (云端) 与 ARM64 (边缘端) 的架构差异，通过 GitHub Actions 驱动边缘节点进行 原地构建 (Native Build)。仅传输源码，在边缘端生成适配 CPU 的原生镜像，极大提升了部署效率与兼容性。
 2. 零信任网络架构 (Zero-Trust)
 
 手机节点不暴露公网端口，仅允许来自 Tailscale 虚拟隧道的入站流量。配合宿主机级 nftables 防火墙，构建了极高的安全屏障。
 3. 全链路可观测性 (Full Observability)
 
     业务监控：实时追踪 FastAPI 博客的访问量、QPS 及 404 状态。
-    硬件监控：监控手机 CPU 温度、内存压力及网络 IO。
-    告警闭环：实现“服务异常 -> 阈值触发 -> 邮件告警”的自动化运维闭环。
+    硬件监控：通过 Node Exporter 监控手机 CPU 温度、内存压力及网络 IO。
+    告警闭环：实现“服务异常 -> 阈值触发 -> 邮件告警”的自动化运维闭环（基于 Alertmanager）。
 
-📊 运行状态预览 (Monitoring Dashboard)
+#📊 运行状态预览 (Monitoring Dashboard)
 
-    提示：以下为系统实时运行截图。
+    提示：以下为系统实时运行截图。请确保仓库内包含 images/ 目录。
 
 1. 监控系统概览 (Grafana Dashboard)
 
@@ -78,7 +78,7 @@ GitHub Actions (CI/CD) / GitOps
 
  
  
-📅 路线图 (Roadmap)
+#📅 路线图 (Roadmap)
 
      
     业务从云端向边缘 ARM 节点迁移。
@@ -91,9 +91,9 @@ GitHub Actions (CI/CD) / GitOps
      
     引入 Ansible 实现多节点配置自动化管理。
 
-👨‍💻 关于作者
+#👨‍💻 关于作者
 
-LonelyHorse - 重庆地区大一学生 / DevOps 爱好者
+LonelyHorse - 重庆地区三本计算机专业大一学生 / DevOps 爱好者
 
     Blog: https://blog.lonelyhorse.top
     Monitoring: https://grafana.lonelyhorse.top
