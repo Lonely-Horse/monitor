@@ -13,10 +13,10 @@
 
 ```mermaid
 graph TD
-    User((访问者)) -- HTTPS/443 --> Aliyun[阿里云 Nginx 网关]
-    Aliyun -- Tailscale 隧道 --> Phone[一加手机 边缘节点]
+    User((访问者)) -- "HTTPS/443" --> Aliyun[阿里云 Nginx 网关]
+    Aliyun -- "Tailscale 隧道" --> Phone[一加手机 边缘节点]
     
-    subgraph Phone_Docker[Docker Containers (Host Mode)]
+    subgraph Phone_Docker ["Docker Containers (Host Mode)"]
         Blog[FastAPI Blog]
         Prom[Prometheus]
         Graf[Grafana]
@@ -24,9 +24,9 @@ graph TD
         Node[Node Exporter]
     end
     
-    GitHub -- Push Code --> Actions[GitHub Actions]
-    Actions -- SSH via Tailscale --> Phone
-    Phone -- Git Pull & Build --> Blog
+    GitHub -- "Push Code" --> Actions[GitHub Actions]
+    Actions -- "SSH via Tailscale" --> Phone
+    Phone -- "Git Pull & Build" --> Blog
 ```
 ## 🛠 技术栈 (Tech Stack)
 维度
