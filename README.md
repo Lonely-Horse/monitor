@@ -27,6 +27,7 @@ graph TD
     GitHub -- Push Code --> Actions[GitHub Actions]
     Actions -- SSH via Tailscale --> Phone
     Phone -- Git Pull & Build --> Blog
+```
 🛠 技术栈 (Tech Stack)
 维度
 	
