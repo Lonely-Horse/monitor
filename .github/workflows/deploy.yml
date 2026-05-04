@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    steps:
       - name: Remote Deployment via Aliyun Jump Host
         uses: appleboy/ssh-action@master
         with:
