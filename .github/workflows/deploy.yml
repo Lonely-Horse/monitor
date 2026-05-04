@@ -34,6 +34,10 @@ jobs:
               echo "正在从 GitHub 拉取最新代码..."
               git pull origin main
               
+              #完成渲染
+              cd ./alerting
+              envsubst < alertmanager.yml.template > alertmanager.yml
+
               # 原地构建并重启容器
               # 注意：如果你的用户不在 docker 组，请保留 doas
               echo "正在重新构建并启动 Docker 容器..."
