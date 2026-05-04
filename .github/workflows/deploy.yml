@@ -9,6 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup SSH agent for GitHub
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.GH_DEPLOY_KEY }}
+
       - name: Remote Deployment via Aliyun Jump Host
         uses: appleboy/ssh-action@master
         with:
@@ -18,6 +23,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # 设置连接超时时间
           timeout: 30s
+          agent_forwarding: true
           script: |
             echo "--- 已经成功登录阿里云服务器 ---"
             
